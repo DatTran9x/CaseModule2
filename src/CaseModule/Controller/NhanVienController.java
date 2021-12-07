@@ -134,6 +134,7 @@ public class NhanVienController {
                     view.backToMenu();
                     break;
                 default:
+                    view.error();
                     edit(-1);
             }
         } else {
@@ -148,6 +149,7 @@ public class NhanVienController {
                     view.backToMenu();
                     break;
                 default:
+                    view.error();
                     edit(-1);
             }
         }
@@ -195,6 +197,7 @@ public class NhanVienController {
             case "5":
                 break;
             default:
+                System.err.println("VUI LONG CHON LAI!");
                 getInfo();
                 break;
         }
