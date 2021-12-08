@@ -61,13 +61,13 @@ public class NhanVienView {
         if (choice.equals("1")) {
             return new PartTime(name, age, gender, salary);
         } else {
+            System.out.println("***  Vui long nhap he so luong(100)        ***");
+            double coefficients = validate.validateNumber();
+            System.out.println("**********************************************");
+            coefficients /= 100;
             if (choice.equals("2")) {
-                System.out.println("***  Vui long nhap he so luong(100)        ***");
-                double coefficients = validate.validateNumber();
-                System.out.println("**********************************************");
-                coefficients /= 100;
                 return new FullTime(name, age, gender, salary, coefficients);
-            } else return new Admin(name, age, gender, salary);
+            } else return new Admin(name, age, gender, salary,coefficients);
         }
     }
 

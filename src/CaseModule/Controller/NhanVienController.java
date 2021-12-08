@@ -9,7 +9,7 @@ public class NhanVienController {
     static NhanVienService service = new NhanVienService();
     static NhanVienView view = new NhanVienView();
     static MenuView menu = new MenuView();
-    boolean isAdmin;
+    static boolean isAdmin;
 
     public void checkLogin(String account, String password) {
         boolean check = service.logIn(account, password);

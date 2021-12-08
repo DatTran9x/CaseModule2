@@ -7,8 +7,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Validate {
-    Scanner scanner = new Scanner(System.in);
-    NhanVienController controller = new NhanVienController();
+    static Scanner scanner = new Scanner(System.in);
+    static NhanVienController controller = new NhanVienController();
+
     public String validateName() {
         String regex = scanner.nextLine();
         if (controller.checkName(regex)) {

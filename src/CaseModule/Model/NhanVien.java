@@ -2,7 +2,7 @@ package CaseModule.Model;
 
 import java.io.Serializable;
 
-public class NhanVien implements Serializable {
+public abstract class NhanVien implements Serializable {
     private String name;
     private int age;
     private String gender;
@@ -46,9 +46,7 @@ public class NhanVien implements Serializable {
         return gender;
     }
 
-    public double getLuongTong() {
-        return luongTheoGio * gioLam;
-    }
+    public abstract double getLuongTong();
 
     public String isStatus() {
         if (status) {

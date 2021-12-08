@@ -4,9 +4,9 @@ import CaseModule.View.MenuView;
 import CaseModule.View.NhanVienView;
 
 public class MenuController {
-    MenuView menu = new MenuView();
-    NhanVienController controller = new NhanVienController();
-    NhanVienView view = new NhanVienView();
+    static MenuView menu = new MenuView();
+    static NhanVienController controller = new NhanVienController();
+    static NhanVienView view = new NhanVienView();
 
     public void menu() {
         try {

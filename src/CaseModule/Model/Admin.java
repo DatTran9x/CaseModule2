@@ -1,11 +1,13 @@
 package CaseModule.Model;
 
-public class Admin extends NhanVien{
+public class Admin extends FullTime{
+
+
     public Admin() {
     }
 
-    public Admin(String name, int age, String gender, int luongTheoGio) {
-        super(name, age, gender, luongTheoGio);
+    public Admin(String name, int age, String gender, int salaryByHours, double coefficients) {
+        super(name, age, gender, salaryByHours, coefficients);
     }
 
     @Override

@@ -13,7 +13,7 @@ public class FullTime extends NhanVien {
 
     @Override
     public double getLuongTong(){
-        return super.getLuongTong()*coefficients;
+        return getLuongTheoGio()*getGioLam()*coefficients;
     }
 
     @Override

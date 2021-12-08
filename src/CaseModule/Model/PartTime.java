@@ -9,6 +9,11 @@ public class PartTime extends NhanVien{
     }
 
     @Override
+    public double getLuongTong() {
+        return getGioLam()*getLuongTheoGio();
+    }
+
+    @Override
     public String toString() {
         return super.toString();
     }
