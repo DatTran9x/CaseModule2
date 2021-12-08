@@ -1,6 +1,6 @@
 package CaseModule.View;
 
-import CaseModule.Controller.NhanVienController;
+import CaseModule.Controller.MenuController;
 import CaseModule.Model.Admin;
 import CaseModule.Model.FullTime;
 import CaseModule.Model.NhanVien;
@@ -8,23 +8,11 @@ import CaseModule.Model.PartTime;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class NhanVienView {
-    static NhanVienController controller = new NhanVienController();
     static Scanner scanner = new Scanner(System.in);
-
-    public void logIn() {
-        System.out.println("***************************************");
-        System.out.println("*****         DANG NHAP           *****");
-        System.out.println("***** Vui long nhap ten tai khoan *****");
-        String account = scanner.nextLine();
-        System.out.println("*****    Vui long nhap mat khau   *****");
-        System.out.println("***************************************");
-        String password = scanner.nextLine();
-        controller.checkLogin(account, password);
-    }
+    static MenuController Menu = new MenuController();
+    static Validate validate = new Validate();
 
     public String getAccountName() {
         System.out.println("vui long nhap ten tai khoan");
@@ -36,55 +24,6 @@ public class NhanVienView {
         return scanner.nextLine();
     }
 
-    public String menu() {
-        System.out.println("************************************************");
-        System.out.println("**********------------Menu------------**********");
-        System.out.println("***       1.Them nhan vien                   ***");
-        System.out.println("***       2.Tim kiem nhan vien               ***");
-        System.out.println("***       3.Sua thong tin nhan vien          ***");
-        System.out.println("***       4.Xoa nhan vien                    ***");
-        System.out.println("***       5.Hien thi danh sach nhan vien     ***");
-        System.out.println("***       6.Kiem tra trang thai nhan vien    ***");
-        System.out.println("***       7.Thay doi trang thai nhan vien    ***");
-        System.out.println("***       8.Thong tin tai khoan              ***");
-        System.out.println("***       9.Dang xuat                        ***");
-        System.out.println("***       10.Thoat chuong trinh              ***");
-        System.out.println("************************************************");
-        return scanner.nextLine();
-
-    }
-
-    public String info() {
-        System.out.println("****************************************");
-        System.out.println("***   1.Lay thong tin tai khoan      ***");
-        System.out.println("***   2.Tao tai khoan                ***");
-        System.out.println("***   3.Thay doi tai khoan           ***");
-        System.out.println("***   4.Xoa tai khoan                ***");
-        System.out.println("***   5.Quay lai Menu                ***");
-        System.out.println("****************************************");
-        return scanner.nextLine();
-    }
-
-    public String choose() {
-        System.out.println("****************************************");
-        System.out.println("***           1.FullTime             ***");
-        System.out.println("***           2.PartTime             ***");
-        System.out.println("***           3.Admin                ***");
-        System.out.println("***           4.Quay lai MENU        ***");
-        System.out.println("****************************************");
-        String choice = scanner.nextLine();
-        switch (choice) {
-            case "1":
-            case "2":
-            case "3":
-            case "4":
-                return choice;
-            default:
-                System.err.println("Vui long chon lai");
-                return choose();
-        }
-    }
-
     public String getName() {
         System.out.println("***************************************");
         System.out.println("***   Vui long nhap ten nhan vien   ***");
@@ -92,7 +31,7 @@ public class NhanVienView {
         System.out.println("***************************************");
         String name = scanner.nextLine();
         if (name.equalsIgnoreCase("quit")) {
-            controller.choice();
+            Menu.menu();
         }
         return name;
     }
@@ -112,47 +51,23 @@ public class NhanVienView {
     public NhanVien createNhanVien(String choice) {
         System.out.println("**********************************************");
         System.out.println("***  Vui long nhap ten nhan vien           ***");
-        String name = validateName();
+        String name = validate.validateName();
         System.out.println("***  Vui long nhap tuoi nhan vien          ***");
-        int age = validateNumber();
+        int age = validate.validateNumber();
         System.out.println("***  Vui long nhap gioi tinh cua nhan vien ***");
-        String gender = validateGender();
+        String gender = validate.validateGender();
         System.out.println("***  Vui long nhap muc luong               ***");
-        int salary = validateNumber();
+        int salary = validate.validateNumber();
         if (choice.equals("1")) {
             return new PartTime(name, age, gender, salary);
         } else {
             if (choice.equals("2")) {
                 System.out.println("***  Vui long nhap he so luong(100)        ***");
-                double coefficients = validateNumber();
+                double coefficients = validate.validateNumber();
                 System.out.println("**********************************************");
                 coefficients /= 100;
                 return new FullTime(name, age, gender, salary, coefficients);
             } else return new Admin(name, age, gender, salary);
-        }
-    }
-
-    public String chooseWhatToEdit() {
-        System.out.println("**********************************************");
-        System.out.println("***      1.Sua thong tin nhan vien         ***");
-        System.out.println("***      2.Sua so gio lam cua nhan vien    ***");
-        System.out.println("***      3.Quay lai MENU                   ***");
-        System.out.println("**********************************************");
-        return scanner.nextLine();
-    }
-
-    public int validateNumber() {
-        try {
-            String number = scanner.nextLine();
-            int so = Integer.parseInt(number);
-            if (so < 0) {
-                System.err.println("VUI LONG NHAP LAI!");
-                return validateNumber();
-            }
-            return so;
-        } catch (Exception e) {
-            System.err.println("VUI LONG NHAP SO!");
-            return validateNumber();
         }
     }
 
@@ -170,73 +85,18 @@ public class NhanVienView {
 
     public double getGioLam() {
         System.out.println("***     Nhap gio lam cua nhan vien             ***");
-        return validateGioLam();
+        return validate.validateGioLam();
     }
 
-    private double validateGioLam() {
-        try {
-            String timeWork = scanner.nextLine();
-            double gioLam = Double.parseDouble(timeWork);
-            if (gioLam < 0) {
-                System.err.println("VUI LONG NHAP LAI!");
-                return validateGioLam();
-            }
-            return gioLam;
-        } catch (Exception e) {
-            System.err.println("VUI LONG NHAP SO!");
-            return validateGioLam();
-        }
-    }
 
     public void backToMenu() {
         System.out.println("Quay tro lai MENU!");
-    }
-
-    public String chooseWhatToDoWithNhanVien() {
-        System.out.println("**********************************************");
-        System.out.println("***           1.Sua nhan vien              ***");
-        System.out.println("***           2.Xoa nhan vien              ***");
-        System.out.println("***           3.Quay lai MENU              ***");
-        System.out.println("**********************************************");
-        return scanner.nextLine();
     }
 
     public void error() {
         System.err.println("LOI!");
     }
 
-    public String validateName() {
-        String regex = scanner.nextLine();
-        if (controller.checkName(regex)) {
-            System.err.println("DA TON TAI TEN NAY");
-            validateName();
-        }
-        final String ACCOUNT_REGEX = ("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ\"+\n" +
-                "\"ẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ\"+\n" +
-                "\"ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\\s]+$");
-        Pattern pattern = Pattern.compile(ACCOUNT_REGEX);
-        Matcher matcher = pattern.matcher(regex);
-        if (matcher.matches()) {
-            return regex;
-        } else {
-            System.err.println("VUI LONG NHAP LAI!");
-            regex=validateName();
-        }
-        return regex;
-    }
-
-    public String validateGender() {
-        System.out.println("**********************************************");
-        System.out.println("*****              1.Nam                   ***");
-        System.out.println("*****              2.Nu                    ***");
-        System.out.println("**********************************************");
-        String choice = scanner.nextLine();
-        while (true) {
-            if(choice.equals("1")) return "Nam";
-            else if(choice.equals("2")) return "Nu";
-            else System.err.println("VUI LONG CHON LAI!");
-        }
-    }
 
     public void accountNameExist() {
         System.err.println("TEN TAI KHOAN DA TON TAI!");
@@ -244,5 +104,9 @@ public class NhanVienView {
 
     public void accountExist() {
         System.err.println("TAI KHOAN DA TON TAI!");
+    }
+
+    public void deleteSuccess() {
+        System.out.println("DA XOA THANH CONG!+");
     }
 }

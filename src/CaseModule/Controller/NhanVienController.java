@@ -2,11 +2,13 @@ package CaseModule.Controller;
 
 import CaseModule.Model.Admin;
 import CaseModule.Service.NhanVienService;
+import CaseModule.View.MenuView;
 import CaseModule.View.NhanVienView;
 
 public class NhanVienController {
     static NhanVienService service = new NhanVienService();
     static NhanVienView view = new NhanVienView();
+    static MenuView menu = new MenuView();
     boolean isAdmin;
 
     public void checkLogin(String account, String password) {
@@ -14,77 +16,33 @@ public class NhanVienController {
         if (check) {
             int index = service.getIndexAccount(account);
             isAdmin = service.getList().get(index) instanceof Admin;
-            choice();
+            new MenuController().menu();
         } else {
             logOut();
         }
     }
 
-    public void choice() {
-        try {
-            while (true) {
-                switch (view.menu()) {
-                    case "1":
-                        addNhanVien();
-                        break;
-                    case "2":
-                        findNhanVien();
-                        break;
-                    case "3":
-                        edit(-1);
-                        break;
-                    case "4":
-                        deleteNhanVien();
-                        break;
-                    case "5":
-                        showListNhanVien();
-                        break;
-                    case "6":
-                        checkWorkingOrNot();
-                        break;
-                    case "7":
-                        setStatusNhanVien();
-                        break;
-                    case "8":
-                        getInfo();
-                        break;
-                    case "9":
-                        logOut();
-                        break;
-                    case "10":
-                        System.exit(10);
-                    default:
-                        view.error();
-                }
-            }
-        } catch (Exception e) {
-            view.error();
-            e.printStackTrace();
-            choice();
-        }
+    protected void logOut() {
+        menu.logInMenu();
     }
 
-    private void logOut() {
-        view.logIn();
-    }
-
-    private void checkWorkingOrNot() {
+    protected void checkWorkingOrNot() {
         view.showStatus(service.checkStatusNhanVien(getIndex()));
     }
 
-    private void showListNhanVien() {
+    protected void showListNhanVien() {
         view.showListNhanVien(service.getList());
     }
 
-    private void addNhanVien() {
+    protected void addNhanVien() {
         if (isAdmin) {
-            String choose = view.choose();
-            if(choose.equals("4")) return;
+            String choose = menu.addMenu();
+            if (choose.equals("4")) return;
             service.addNhanVien(view.createNhanVien(choose));
         } else view.noAcess();
     }
 
-    private void setStatusNhanVien() {
+    protected void setStatusNhanVien() {
         if (isAdmin) {
             int tempIndex = getIndex();
             service.setStatusNhanVien(tempIndex);
@@ -92,16 +50,18 @@ public class NhanVienController {
         } else view.noAcess();
     }
 
-    private void deleteNhanVien() {
-        if (isAdmin) service.deleteNhanVien(getIndex());
-        else view.noAcess();
+    protected void deleteNhanVien() {
+        if (isAdmin) {
+            service.deleteNhanVien(getIndex());
+            view.deleteSuccess();
+        } else view.noAcess();
     }
 
-    private void findNhanVien() {
+    protected void findNhanVien() {
         int tempIndex = getIndex();
         view.showNhanVien(service.getList().get(tempIndex));
         if (isAdmin) {
-            switch (view.chooseWhatToDoWithNhanVien()) {
+            switch (menu.findMenu()) {
                 case "1":
                     edit(tempIndex);
                     break;
@@ -117,82 +77,48 @@ public class NhanVienController {
         }
     }
 
-    private void edit(int tempIndex) {
+    protected void edit(int tempIndex) {
         if (!isAdmin) {
             view.noAcess();
             return;
         }
         if (tempIndex == -1) {
-            switch (view.chooseWhatToEdit()) {
-                case "1":
-                    service.editNhanVien(getIndex(), view.createNhanVien(view.choose()));
-                    break;
-                case "2":
-                    service.editGioLam(getIndex(), view.getGioLam());
-                    break;
-                case "3":
-                    view.backToMenu();
-                    break;
-                default:
-                    view.error();
-                    edit(-1);
-            }
+            editNhanVien(getIndex());
         } else {
-            switch (view.chooseWhatToEdit()) {
-                case "1":
-                    service.editNhanVien(tempIndex, view.createNhanVien(view.choose()));
-                    break;
-                case "2":
-                    service.editGioLam(tempIndex, view.getGioLam());
-                    break;
-                case "3":
-                    view.backToMenu();
-                    break;
-                default:
-                    view.error();
-                    edit(-1);
-            }
+            editNhanVien(tempIndex);
         }
     }
 
-    private void getInfo() {
-        switch (view.info()) {
+    private void editNhanVien(int index) {
+        switch (menu.editMenu()) {
             case "1":
-                view.showInfo(service.getList().get(getIndex()));
+                service.editNhanVien(index, view.createNhanVien(menu.addMenu()));
                 break;
             case "2":
-                if (isAdmin) {
-                    int tempindex = getIndex();
-                    if (service.checkAccountExist(tempindex)) {
-                        String accountName = view.getAccountName();
-                        String password = view.getPassword();
-                        if (service.checkACccountNameDupplicate(accountName)) {
-                            service.signIn(tempindex, accountName, password);
-                        } else {
-                            view.accountNameExist();
-                        }
-                    } else view.accountExist();
-                } else view.noAcess();
+                service.editGioLam(index, view.getGioLam());
                 break;
             case "3":
-                if (isAdmin) {
-                    int tempindex = getIndex();
-                    String accountName = view.getAccountName();
-                    String password = view.getPassword();
-                    if (service.checkACccountNameDupplicate(accountName)) {
-                        service.signIn(tempindex, accountName, password);
-                    } else {
-                        view.accountNameExist();
-                    }
-                } else view.noAcess();
+                view.backToMenu();
+                break;
+            default:
+                view.error();
+                edit(-1);
+        }
+    }
+
+    protected void getInfo() {
+        switch (menu.accountMenu()) {
+            case "1":
+                showInfo();
+                break;
+            case "2":
+                createAccount();
+                break;
+            case "3":
+                editAccount();
                 break;
             case "4":
-                if (isAdmin) {
-                    int tempindex = getIndex();
-                    if (service.checkAccountExist(tempindex))
-                        service.signIn(tempindex, null, null);
-                    else view.error();
-                } else view.noAcess();
+                deleteAccount();
                 break;
             case "5":
                 break;
@@ -201,6 +127,47 @@ public class NhanVienController {
                 getInfo();
                 break;
         }
+    }
+
+    private void deleteAccount() {
+        if (isAdmin) {
+            int tempindex = getIndex();
+            if (service.checkAccountExist(tempindex))
+                service.signIn(tempindex, null, null);
+            else view.error();
+        } else view.noAcess();
+    }
+
+    private void editAccount() {
+        if (isAdmin) {
+            int tempindex = getIndex();
+            String accountName = view.getAccountName();
+            String password = view.getPassword();
+            if (service.checkACccountNameDupplicate(accountName)) {
+                service.signIn(tempindex, accountName, password);
+            } else {
+                view.accountNameExist();
+            }
+        } else view.noAcess();
+    }
+
+    private void createAccount() {
+        if (isAdmin) {
+            int tempindex = getIndex();
+            if (service.checkAccountExist(tempindex)) {
+                String accountName = view.getAccountName();
+                String password = view.getPassword();
+                if (service.checkACccountNameDupplicate(accountName)) {
+                    service.signIn(tempindex, accountName, password);
+                } else {
+                    view.accountNameExist();
+                }
+            } else view.accountExist();
+        } else view.noAcess();
+    }
+
+    private void showInfo() {
+        view.showInfo(service.getList().get(getIndex()));
     }
 
     private int getIndex() {
